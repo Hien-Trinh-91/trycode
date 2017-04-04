@@ -30,7 +30,7 @@
 			<li ng-repeat="product in products">
 				{{product.name}} was added {{product.quantity}} total {{product.total | currency}}
 			</li>
-			Total Payement: 
+			Total Payement: {{totalPayement}}
 		</ul>
 
 
@@ -51,6 +51,7 @@
 
 	app.service('productService', function () {
 		var productList = [];
+		var totalPayement = 0;
 
 		var addProduct = function (Product) {
 
@@ -65,7 +66,6 @@
 			if (findExistingProduct > -1) {
 				productList[findExistingProduct].quantity++;
 				productList[findExistingProduct].total += productList[findExistingProduct].total;
-
 			} else
 				productList.push(newProduct);
 		}
