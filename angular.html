@@ -1,0 +1,124 @@
+<html>
+
+<head>
+	<title>AngularJS Services</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-animate.min.js"></script>
+</head>
+
+<body ng-app="myApp">
+	<!--<div ng-controller="ParentCtrl">
+		<h1>{{ title }}</h1>
+		<p>{{ description }}</p>
+		<div ng-controller="ChildCtrl">
+			<h1>{{ title }}</h1>
+			<input type="text" ng-model="$parent.description" />
+		</div>
+	</div>-->
+
+
+	<div ng-controller="productController">
+		<ul>
+			<li ng-repeat="product in products" ng-click='addProduct(product)'>
+				{{product.name}} {{product.price | currency}}
+			</li>
+		</ul>
+	</div>
+	<div ng-controller="CartController">
+		Your Cart
+		<ul>
+			<li ng-repeat="product in products">
+				{{product.name}} was added {{product.quantity}} total {{product.total | currency}}
+			</li>
+			Total Payement: 
+		</ul>
+
+
+
+	</div>
+</body>
+<script>
+	var app = angular.module('myApp', [])
+
+
+	app.controller("ChildCtrl", ['$scope', function ($scope) {
+		$scope.title = "I'm the Child.";
+	}]);
+
+	app.controller("ParentCtrl", ['$scope', function ($scope) {
+		$scope.title = "I'm the Parent.";
+	}]);
+
+	app.service('productService', function () {
+		var productList = [];
+
+		var addProduct = function (Product) {
+
+			var newProduct = {
+				name: Product.name,
+				quantity: 1,
+				total: Product.price
+			}
+			var findExistingProduct = productList.findIndex(function (p) {
+				return p.name === Product.name;
+			})
+			if (findExistingProduct > -1) {
+				productList[findExistingProduct].quantity++;
+				productList[findExistingProduct].total += productList[findExistingProduct].total;
+
+			} else
+				productList.push(newProduct);
+		}
+
+
+		var getProducts = function () {
+			return productList;
+		}
+
+		return {
+			addProduct: addProduct,
+			getProducts: getProducts
+		};
+	})
+
+	app.controller('productController', function ($scope, productService) {
+		$scope.addProduct = function (curObj) {
+			productService.addProduct(curObj)
+		}
+		$scope.products = [{
+				name: 'Lamborghini',
+				price: 100000
+			},
+			{
+				name: 'McLaren',
+				price: 120000
+			},
+			{
+				name: 'BMW',
+				price: 140000
+			},
+			{
+				name: 'Maybach',
+				price: 200000
+			},
+			{
+				name: 'Audi',
+				price: 170000
+			},
+			{
+				name: 'Ferrari',
+				price: 160000
+			},
+			{
+				name: 'Buggati',
+				price: 120000
+			},
+		]
+	})
+
+	app.controller('CartController', function ($scope, productService) {
+		$scope.products = productService.getProducts();
+	});
+</script>
+
+</html>
